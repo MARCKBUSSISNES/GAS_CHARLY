@@ -13,7 +13,12 @@ function loadDB(){
     localStorage.setItem(DB_KEY, JSON.stringify(initial));
     return initial;
   }
-  try { return JSON.parse(raw); } catch(e){ console.error('DB corrupta, restaurando...'); const initial = { products:[], clients:[], sales:[], loans:[] }; localStorage.setItem(DB_KEY, JSON.stringify(initial)); return initial; }
+  try { return JSON.parse(raw); } catch(e){ 
+    console.error('DB corrupta, restaurando...'); 
+    const initial = { products:[], clients:[], sales:[], loans:[] }; 
+    localStorage.setItem(DB_KEY, JSON.stringify(initial)); 
+    return initial; 
+  }
 }
 function saveDB(db){ localStorage.setItem(DB_KEY, JSON.stringify(db)); }
 
@@ -179,7 +184,6 @@ document.getElementById('sale-finish').addEventListener('click', ()=>{
   refreshDB();
   const tipo = saleType.value; const clientId = saleClientSelect.value || null;
   const total = CART.reduce((a,c)=>a+c.total,0);
-  // actualizar stock
   CART.forEach(it=>{
     const p = DB.products.find(x=>x.id===it.productId);
     if(p){ p.stock = Math.max(0, Number(p.stock) - Number(it.qty)); }
@@ -196,8 +200,8 @@ function renderSalesTable(){
   refreshDB();
   salesTableBody.innerHTML = '';
   DB.sales.slice().reverse().forEach(s=>{
-    const tr = document.createElement('tr');
     const client = DB.clients.find(c=>c.id===s.clientId);
+    const tr = document.createElement('tr');
     tr.innerHTML = `<td>${s.id}</td><td>${s.type}</td><td>Q${Number(s.total).toFixed(2)}</td><td>${client?client.name:''}</td><td>${s.paid? 'Sí' : 'No'}</td>
       <td>${s.type==='credit' ? `<button onclick="openPay('${s.id}')">Agregar pago</button>` : ''}</td>`;
     salesTableBody.appendChild(tr);
@@ -274,7 +278,7 @@ window.returnLoan = function(id){
   l.status='returned'; l.returnedAt = new Date().toISOString(); saveDB(DB); renderLoans();
 }
 
-// ---------- REPORTES / BACKUP ----------
+// ---------- REPORTES / RESUMEN ----------
 function renderSummary(){
   refreshDB();
   const totalVentas = DB.sales.reduce((a,s)=>a+Number(s.total),0);
@@ -284,20 +288,32 @@ function renderSummary(){
     const paid = (s.payments||[]).reduce((a,p)=>a+Number(p.amount),0);
     return { id:s.id, client: (DB.clients.find(c=>c.id===s.clientId)||{}).name || '', total:s.total, paid, pending: Number(s.total - paid) };
   });
-  const summary = {
-    productos: DB.products.length,
-    clientes: DB.clients.length,
-    ventas: DB.sales.length,
-    totalVentas: Number(totalVentas.toFixed(2)),
-    efectivo: Number(totalEfectivo.toFixed(2)),
-    credito: Number(totalCredito.toFixed(2)),
-    creditosPendientes: pendientes,
-    prestamos: DB.loans.length
-  };
-  document.getElementById('summary').textContent = JSON.stringify(summary, null, 2);
+
+  let html = `
+    <h3>Resumen de Reportes</h3>
+    <ul>
+      <li><strong>Productos registrados:</strong> ${DB.products.length}</li>
+      <li><strong>Clientes registrados:</strong> ${DB.clients.length}</li>
+      <li><strong>Ventas totales:</strong> ${DB.sales.length}</li>
+      <li><strong>Total de ventas:</strong> Q${totalVentas.toFixed(2)}</li>
+      <li><strong>Efectivo:</strong> Q${totalEfectivo.toFixed(2)}</li>
+      <li><strong>Crédito:</strong> Q${totalCredito.toFixed(2)}</li>
+      <li><strong>Préstamos:</strong> ${DB.loans.length}</li>
+    </ul>
+  `;
+
+  if(pendientes.length>0){
+    html += `<h4>Créditos pendientes:</h4><ul>`;
+    pendientes.forEach(c=>{
+      html += `<li>${c.client}: Q${c.pending.toFixed(2)}</li>`;
+    });
+    html += `</ul>`;
+  }
+
+  document.getElementById('summary').innerHTML = html;
 }
 
-// Export / Import / Reset
+// ---------- EXPORT / IMPORT / RESET ----------
 document.getElementById('export-json').addEventListener('click', ()=>{
   const dataStr = JSON.stringify(DB, null, 2);
   const blob = new Blob([dataStr], { type: 'application/json' });
@@ -330,9 +346,7 @@ document.getElementById('reset-all').addEventListener('click', ()=>{
 // ---------- INICIALIZACIÓN ----------
 function init(){
   refreshDB();
-  // si no hay nada, puedes crear ejemplos (opcional)
   if(DB.products.length===0 && DB.clients.length===0 && DB.sales.length===0 && DB.loans.length===0){
-    // ejemplo ligero para arrancar; si no quieres, comenta estas líneas
     DB.products.push({ id: uid(), name:'Bombona 10 kg', price: 120, stock: 20, createdAt:new Date().toISOString() });
     DB.products.push({ id: uid(), name:'Recarga de gas', price: 85, stock: 100, createdAt:new Date().toISOString() });
     DB.clients.push({ id: uid(), name:'Consumidor final', phone:'', note:'Cliente genérico', createdAt:new Date().toISOString() });
