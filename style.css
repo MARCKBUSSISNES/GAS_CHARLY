@@ -32,3 +32,16 @@ th,td{padding:8px;border-bottom:1px solid #eee;text-align:left;font-size:13px}
   .row{flex-direction:column}
   .menu{width:120px}
 }
+.firma {
+  text-align: center;
+  padding: 15px;
+  color: #aaa;
+  font-size: 14px;
+  border-top: 1px solid #222;
+  background-color: #001F3F;
+}
+.firma strong {
+  color: #00BFFF;
+  letter-spacing: 1px;
+}
+
