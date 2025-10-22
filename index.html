@@ -6,150 +6,163 @@
 <title>Gas Charly - Sistema de Ventas | Marck Business</title>
 <link rel="stylesheet" href="style.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="icon" href="assets/logo.png">
+<link rel="icon" href="assets/LOGO SIN FONDO PNG.png">
+<style>
+/* Mensaje de versión de prueba */
+.version-prueba {
+  background-color: #ffcc00;
+  color: #000;
+  text-align: center;
+  padding: 6px 0;
+  font-weight: bold;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+</style>
 </head>
 
 <body>
-  <!-- BARRA SUPERIOR -->
-  <header class="top">
-    <img src="assets/logo.png" alt="Logo Gas Charly" width="40" height="40" style="border-radius:8px;">
-    <div>
-      <div class="brand">Gas Charly</div>
-      <div class="subtitle">Sistema de ventas y control - Marck Business</div>
+
+<!-- MENSAJE DE VERSIÓN DE PRUEBA -->
+<div class="version-prueba">
+  VERSIÓN DE PRUEBA - CADUCA 22/11/2025
+</div>
+
+<!-- BARRA SUPERIOR -->
+<header class="top">
+  <img src="assets/LOGO SIN FONDO PNG.png" alt="Logo Gas Charly" width="40" height="40" style="border-radius:8px;">
+  <div>
+    <div class="brand">Gas Charly</div>
+    <div class="subtitle">Sistema de ventas y control - Marck Business</div>
+  </div>
+</header>
+
+<!-- CONTENEDOR PRINCIPAL -->
+<main class="container">
+  <!-- MENÚ LATERAL -->
+  <nav class="menu">
+    <button class="menu-btn" onclick="mostrarVista('inicio')">🏠 Inicio</button>
+    <button class="menu-btn" onclick="mostrarVista('ventas')">💵 Ventas</button>
+    <button class="menu-btn" onclick="mostrarVista('creditos')">📜 Créditos</button>
+    <button class="menu-btn" onclick="mostrarVista('clientes')">👥 Clientes</button>
+    <button class="menu-btn" onclick="mostrarVista('productos')">📦 Productos</button>
+    <button class="menu-btn" onclick="mostrarVista('tambos')">🛢️ Tambos Prestados</button>
+    <button class="menu-btn" onclick="mostrarVista('reportes')">📈 Reportes</button>
+  </nav>
+
+  <!-- CONTENIDO -->
+  <section class="content">
+    <div id="inicio" class="view">
+      <h2>Bienvenido a Gas Charly</h2>
+      <p>Controla tus ventas, clientes, créditos y tambos de gas desde un solo lugar. 
+      Este sistema fue diseñado por <strong>Marck Business</strong> para facilitar la gestión diaria sin bases de datos.</p>
+
+      <div class="row">
+        <div class="card flex-1">
+          <h3>Ventas en Efectivo</h3>
+          <p class="small">Consulta tus ventas recientes y registra nuevas operaciones.</p>
+          <button class="primary" onclick="mostrarVista('ventas')">Ir a Ventas</button>
+        </div>
+        <div class="card flex-1">
+          <h3>Ventas al Crédito</h3>
+          <p class="small">Gestiona los créditos de tus clientes y verifica pagos pendientes.</p>
+          <button class="primary" onclick="mostrarVista('creditos')">Ir a Créditos</button>
+        </div>
+      </div>
     </div>
-  </header>
 
-  <!-- CONTENEDOR PRINCIPAL -->
-  <main class="container">
-    <!-- MENÚ LATERAL -->
-    <nav class="menu">
-      <button class="menu-btn" onclick="mostrarVista('inicio')">🏠 Inicio</button>
-      <button class="menu-btn" onclick="mostrarVista('ventas')">💵 Ventas</button>
-      <button class="menu-btn" onclick="mostrarVista('creditos')">📜 Créditos</button>
-      <button class="menu-btn" onclick="mostrarVista('clientes')">👥 Clientes</button>
-      <button class="menu-btn" onclick="mostrarVista('productos')">📦 Productos</button>
-      <button class="menu-btn" onclick="mostrarVista('tambos')">🛢️ Tambos Prestados</button>
-      <button class="menu-btn" onclick="mostrarVista('reportes')">📈 Reportes</button>
-    </nav>
-
-    <!-- CONTENIDO -->
-    <section class="content">
-      <!-- Vista principal -->
-      <div id="inicio" class="view">
-        <h2>Bienvenido a Gas Charly</h2>
-        <p>Controla tus ventas, clientes, créditos y tambos de gas desde un solo lugar. 
-        Este sistema fue diseñado por <strong>Marck Business</strong> para facilitar la gestión diaria sin bases de datos.</p>
-
-        <div class="row">
-          <div class="card flex-1">
-            <h3>Ventas en Efectivo</h3>
-            <p class="small">Consulta tus ventas recientes y registra nuevas operaciones.</p>
-            <button class="primary" onclick="mostrarVista('ventas')">Ir a Ventas</button>
-          </div>
-          <div class="card flex-1">
-            <h3>Ventas al Crédito</h3>
-            <p class="small">Gestiona los créditos de tus clientes y verifica pagos pendientes.</p>
-            <button class="primary" onclick="mostrarVista('creditos')">Ir a Créditos</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Vista de ventas -->
-      <div id="ventas" class="view" style="display:none;">
-        <h2>Registro de Ventas</h2>
-        <p>Aquí podrás registrar y visualizar todas las ventas en efectivo.</p>
-        <div class="card">
-          <label>Cliente</label>
-          <input type="text" placeholder="Nombre del cliente">
-          <label>Producto</label>
-          <input type="text" placeholder="Gas 25 lb, Gas 35 lb, etc.">
-          <label>Monto</label>
-          <input type="number" placeholder="0.00">
-          <div class="actions">
-            <button class="primary">Registrar Venta</button>
-            <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Vista de créditos -->
-      <div id="creditos" class="view" style="display:none;">
-        <h2>Ventas al Crédito</h2>
-        <p>Controla los créditos activos y registra pagos.</p>
-        <table>
-          <thead>
-            <tr><th>Cliente</th><th>Monto</th><th>Fecha</th><th>Estado</th></tr>
-          </thead>
-          <tbody id="tablaCreditos">
-            <tr><td>Juan Pérez</td><td>Q120</td><td>21/10/2025</td><td>Pendiente</td></tr>
-          </tbody>
-        </table>
+    <div id="ventas" class="view" style="display:none;">
+      <h2>Registro de Ventas</h2>
+      <p>Aquí podrás registrar y visualizar todas las ventas en efectivo.</p>
+      <div class="card">
+        <label>Cliente</label>
+        <input type="text" placeholder="Nombre del cliente">
+        <label>Producto</label>
+        <input type="text" placeholder="Gas 25 lb, Gas 35 lb, etc.">
+        <label>Monto</label>
+        <input type="number" placeholder="0.00">
         <div class="actions">
-          <button class="primary">Agregar Crédito</button>
+          <button class="primary">Registrar Venta</button>
           <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
         </div>
       </div>
+    </div>
 
-      <!-- Vista de clientes -->
-      <div id="clientes" class="view" style="display:none;">
-        <h2>Clientes</h2>
-        <p>Registra y edita la información de tus clientes frecuentes.</p>
-        <div class="actions">
-          <button class="primary">Nuevo Cliente</button>
-          <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
-        </div>
+    <div id="creditos" class="view" style="display:none;">
+      <h2>Ventas al Crédito</h2>
+      <p>Controla los créditos activos y registra pagos.</p>
+      <table>
+        <thead>
+          <tr><th>Cliente</th><th>Monto</th><th>Fecha</th><th>Estado</th></tr>
+        </thead>
+        <tbody id="tablaCreditos">
+          <tr><td>Juan Pérez</td><td>Q120</td><td>21/10/2025</td><td>Pendiente</td></tr>
+        </tbody>
+      </table>
+      <div class="actions">
+        <button class="primary">Agregar Crédito</button>
+        <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
       </div>
+    </div>
 
-      <!-- Vista de productos -->
-      <div id="productos" class="view" style="display:none;">
-        <h2>Productos</h2>
-        <p>Administra los tipos de gas o productos adicionales.</p>
-        <div class="actions">
-          <button class="primary">Agregar Producto</button>
-          <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
-        </div>
+    <div id="clientes" class="view" style="display:none;">
+      <h2>Clientes</h2>
+      <p>Registra y edita la información de tus clientes frecuentes.</p>
+      <div class="actions">
+        <button class="primary">Nuevo Cliente</button>
+        <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
       </div>
+    </div>
 
-      <!-- Vista de tambos -->
-      <div id="tambos" class="view" style="display:none;">
-        <h2>Tambos Prestados</h2>
-        <p>Controla los tambos de gas prestados a tus clientes y sus devoluciones.</p>
-        <div class="actions">
-          <button class="primary">Registrar Préstamo</button>
-          <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
-        </div>
+    <div id="productos" class="view" style="display:none;">
+      <h2>Productos</h2>
+      <p>Administra los tipos de gas o productos adicionales.</p>
+      <div class="actions">
+        <button class="primary">Agregar Producto</button>
+        <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
       </div>
+    </div>
 
-      <!-- Vista de reportes -->
-      <div id="reportes" class="view" style="display:none;">
-        <h2>Reportes</h2>
-        <p>Visualiza los totales de ventas, créditos y clientes activos.</p>
-        <div class="actions">
-          <button class="primary">Generar Reporte</button>
-          <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
-        </div>
+    <div id="tambos" class="view" style="display:none;">
+      <h2>Tambos Prestados</h2>
+      <p>Controla los tambos de gas prestados a tus clientes y sus devoluciones.</p>
+      <div class="actions">
+        <button class="primary">Registrar Préstamo</button>
+        <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
       </div>
-    </section>
-  </main>
+    </div>
 
-  <!-- FIRMA -->
-  <footer class="firma">
-    <p>Desarrollado por <strong>Marck Business</strong> © 2025 | Sistema Gas Charly</p>
-  </footer>
+    <div id="reportes" class="view" style="display:none;">
+      <h2>Reportes</h2>
+      <p>Visualiza los totales de ventas, créditos y clientes activos.</p>
+      <div class="actions">
+        <button class="primary">Generar Reporte</button>
+        <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
+      </div>
+    </div>
+  </section>
+</main>
 
-  <!-- SCRIPTS -->
-  <script>
-    // Simple cambio de vista con animación
-    function mostrarVista(id){
-      const views = document.querySelectorAll('.view');
-      views.forEach(v => v.style.display = 'none');
-      const vista = document.getElementById(id);
-      if(vista){
-        vista.style.display = 'block';
-        vista.classList.add('card');
-        vista.style.animation = 'fadeInUp 0.5s ease';
-      }
-    }
-  </script>
+<!-- FIRMA -->
+<footer class="firma">
+  <p>Desarrollado por <strong>Marck Business</strong> © 2025 | Sistema Gas Charly</p>
+</footer>
+
+<!-- SCRIPTS -->
+<script>
+function mostrarVista(id){
+  const views = document.querySelectorAll('.view');
+  views.forEach(v => v.style.display = 'none');
+  const vista = document.getElementById(id);
+  if(vista){
+    vista.style.display = 'block';
+    vista.classList.add('card');
+    vista.style.animation = 'fadeInUp 0.5s ease';
+  }
+}
+</script>
+
 </body>
 </html>
+
+
