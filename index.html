@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>GAS CHARLY - Sistema de Ventas</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">GAS CHARLY</div>
+  <div class="subtitle">Sistema de ventas · Efectivo / Crédito · Control de tambos</div>
+</header>
+
+<main class="container">
+  <aside class="menu">
+    <button class="menu-btn" data-view="productos">Productos</button>
+    <button class="menu-btn" data-view="clientes">Clientes</button>
+    <button class="menu-btn" data-view="ventas">Ventas</button>
+    <button class="menu-btn" data-view="creditos">Créditos</button>
+    <button class="menu-btn" data-view="tambos">Tambos / Préstamos</button>
+    <button class="menu-btn" data-view="reportes">Reportes / Backup</button>
+  </aside>
+
+  <section class="content">
+
+    <!-- PRODUCTOS -->
+    <div class="view" id="view-productos">
+      <h2>Productos</h2>
+      <div class="row">
+        <div class="card">
+          <h3>Agregar / Editar producto</h3>
+          <label>Nombre <input id="prod-name" /></label>
+          <label>Precio (Q) <input id="prod-price" type="number" step="0.01" /></label>
+          <label>Stock <input id="prod-stock" type="number" /></label>
+          <div class="actions">
+            <button id="prod-save" class="primary">Guardar</button>
+            <button id="prod-clear" class="ghost">Limpiar</button>
+          </div>
+        </div>
+
+        <div class="card flex-1">
+          <h3>Lista de productos</h3>
+          <input id="prod-search" placeholder="Buscar producto..." />
+          <table id="prod-table">
+            <thead><tr><th>Nombre</th><th>Precio</th><th>Stock</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENTES -->
+    <div class="view" id="view-clientes" style="display:none">
+      <h2>Clientes</h2>
+      <div class="row">
+        <div class="card">
+          <h3>Agregar / Editar cliente</h3>
+          <label>Nombre <input id="cli-name" /></label>
+          <label>Teléfono <input id="cli-phone" /></label>
+          <label>Dirección / Nota <input id="cli-note" /></label>
+          <div class="actions">
+            <button id="cli-save" class="primary">Guardar</button>
+            <button id="cli-clear" class="ghost">Limpiar</button>
+          </div>
+        </div>
+
+        <div class="card flex-1">
+          <h3>Lista de clientes</h3>
+          <input id="cli-search" placeholder="Buscar cliente..." />
+          <table id="cli-table">
+            <thead><tr><th>Nombre</th><th>Tel</th><th>Nota</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VENTAS -->
+    <div class="view" id="view-ventas" style="display:none">
+      <h2>Ventas</h2>
+      <div class="row">
+        <div class="card">
+          <h3>Agregar producto al carrito</h3>
+          <label>Producto
+            <select id="sale-product"></select>
+          </label>
+          <label>Cantidad <input id="sale-qty" type="number" value="1" /></label>
+          <label>Precio unitario (opcional) <input id="sale-price" type="number" step="0.01" /></label>
+          <div class="actions">
+            <button id="sale-add" class="primary">Agregar al carrito</button>
+            <button id="sale-clearcart" class="ghost">Limpiar carrito</button>
+          </div>
+
+          <h4>Carrito</h4>
+          <table id="cart-table"><thead><tr><th>Producto</th><th>Cant</th><th>PU</th><th>Total</th><th></th></tr></thead><tbody></tbody></table>
+
+          <div class="row" style="margin-top:8px">
+            <label>Tipo de venta
+              <select id="sale-type"><option value="cash">Efectivo</option><option value="credit">Crédito</option></select>
+            </label>
+            <label>Cliente (opcional)
+              <select id="sale-client"><option value="">-- Ninguno --</option></select>
+            </label>
+            <div class="actions" style="align-items:flex-end">
+              <button id="sale-finish" class="primary large">Registrar venta</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card flex-1">
+          <h3>Ventas registradas</h3>
+          <button id="sales-refresh" class="ghost">Refrescar</button>
+          <table id="sales-table"><thead><tr><th>ID</th><th>Tipo</th><th>Total</th><th>Cliente</th><th>Pagado</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CREDITOS -->
+    <div class="view" id="view-creditos" style="display:none">
+      <h2>Créditos y pagos</h2>
+      <div class="card">
+        <h3>Ventas a crédito pendientes</h3>
+        <table id="credits-table"><thead><tr><th>ID</th><th>Cliente</th><th>Total</th><th>Pagado</th><th>Pendiente</th><th></th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+
+    <!-- TAMBOS -->
+    <div class="view" id="view-tambos" style="display:none">
+      <h2>Tambos / Bombonas prestadas</h2>
+      <div class="row">
+        <div class="card">
+          <h3>Registrar préstamo</h3>
+          <label>Descripción (ej. Bombona 10 kg) <input id="loan-item" /></label>
+          <label>Cantidad <input id="loan-qty" type="number" value="1" /></label>
+          <label>Cliente (opcional) <select id="loan-client"><option value="">-- Ninguno --</option></select></label>
+          <div class="actions"><button id="loan-save" class="primary">Registrar préstamo</button></div>
+        </div>
+
+        <div class="card flex-1">
+          <h3>Préstamos / Estado</h3>
+          <button id="loan-refresh" class="ghost">Refrescar</button>
+          <table id="loan-table"><thead><tr><th>Item</th><th>Qty</th><th>Cliente</th><th>Estado</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTES -->
+    <div class="view" id="view-reportes" style="display:none">
+      <h2>Reportes y Backup</h2>
+      <div class="card">
+        <h3>Resumen rápido</h3>
+        <pre id="summary" class="pre"></pre>
+      </div>
+
+      <div class="card">
+        <h3>Exportar / Importar datos</h3>
+        <div class="actions">
+          <button id="export-json" class="primary">Exportar todo (JSON)</button>
+          <input id="import-file" type="file" accept=".json" />
+          <button id="import-json" class="ghost">Importar JSON</button>
+          <button id="reset-all" class="danger">RESET TOTAL (elimina todo)</button>
+        </div>
+        <p class="small">Se recomienda exportar antes de importar o resetear.</p>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<footer class="footer">GAS CHARLY · Sistema local · No requiere internet · Backups recomendados</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
