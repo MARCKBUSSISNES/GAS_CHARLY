@@ -1,179 +1,155 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>GAS CHARLY - Sistema de Ventas</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gas Charly - Sistema de Ventas | Marck Business</title>
 <link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/logo.png">
 </head>
+
 <body>
-<header class="top">
-  <div class="brand">GAS CHARLY</div>
-  <div class="subtitle">Sistema de ventas · Efectivo / Crédito · Control de tambos</div>
-</header>
+  <!-- BARRA SUPERIOR -->
+  <header class="top">
+    <img src="assets/logo.png" alt="Logo Gas Charly" width="40" height="40" style="border-radius:8px;">
+    <div>
+      <div class="brand">Gas Charly</div>
+      <div class="subtitle">Sistema de ventas y control - Marck Business</div>
+    </div>
+  </header>
 
-<main class="container">
-  <aside class="menu">
-    <button class="menu-btn" data-view="productos">Productos</button>
-    <button class="menu-btn" data-view="clientes">Clientes</button>
-    <button class="menu-btn" data-view="ventas">Ventas</button>
-    <button class="menu-btn" data-view="creditos">Créditos</button>
-    <button class="menu-btn" data-view="tambos">Tambos / Préstamos</button>
-    <button class="menu-btn" data-view="reportes">Reportes / Backup</button>
-  </aside>
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="container">
+    <!-- MENÚ LATERAL -->
+    <nav class="menu">
+      <button class="menu-btn" onclick="mostrarVista('inicio')">🏠 Inicio</button>
+      <button class="menu-btn" onclick="mostrarVista('ventas')">💵 Ventas</button>
+      <button class="menu-btn" onclick="mostrarVista('creditos')">📜 Créditos</button>
+      <button class="menu-btn" onclick="mostrarVista('clientes')">👥 Clientes</button>
+      <button class="menu-btn" onclick="mostrarVista('productos')">📦 Productos</button>
+      <button class="menu-btn" onclick="mostrarVista('tambos')">🛢️ Tambos Prestados</button>
+      <button class="menu-btn" onclick="mostrarVista('reportes')">📈 Reportes</button>
+    </nav>
 
-  <section class="content">
+    <!-- CONTENIDO -->
+    <section class="content">
+      <!-- Vista principal -->
+      <div id="inicio" class="view">
+        <h2>Bienvenido a Gas Charly</h2>
+        <p>Controla tus ventas, clientes, créditos y tambos de gas desde un solo lugar. 
+        Este sistema fue diseñado por <strong>Marck Business</strong> para facilitar la gestión diaria sin bases de datos.</p>
 
-    <!-- PRODUCTOS -->
-    <div class="view" id="view-productos">
-      <h2>Productos</h2>
-      <div class="row">
+        <div class="row">
+          <div class="card flex-1">
+            <h3>Ventas en Efectivo</h3>
+            <p class="small">Consulta tus ventas recientes y registra nuevas operaciones.</p>
+            <button class="primary" onclick="mostrarVista('ventas')">Ir a Ventas</button>
+          </div>
+          <div class="card flex-1">
+            <h3>Ventas al Crédito</h3>
+            <p class="small">Gestiona los créditos de tus clientes y verifica pagos pendientes.</p>
+            <button class="primary" onclick="mostrarVista('creditos')">Ir a Créditos</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista de ventas -->
+      <div id="ventas" class="view" style="display:none;">
+        <h2>Registro de Ventas</h2>
+        <p>Aquí podrás registrar y visualizar todas las ventas en efectivo.</p>
         <div class="card">
-          <h3>Agregar / Editar producto</h3>
-          <label>Nombre <input id="prod-name" /></label>
-          <label>Precio (Q) <input id="prod-price" type="number" step="0.01" /></label>
-          <label>Stock <input id="prod-stock" type="number" /></label>
+          <label>Cliente</label>
+          <input type="text" placeholder="Nombre del cliente">
+          <label>Producto</label>
+          <input type="text" placeholder="Gas 25 lb, Gas 35 lb, etc.">
+          <label>Monto</label>
+          <input type="number" placeholder="0.00">
           <div class="actions">
-            <button id="prod-save" class="primary">Guardar</button>
-            <button id="prod-clear" class="ghost">Limpiar</button>
+            <button class="primary">Registrar Venta</button>
+            <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
           </div>
         </div>
-
-        <div class="card flex-1">
-          <h3>Lista de productos</h3>
-          <input id="prod-search" placeholder="Buscar producto..." />
-          <table id="prod-table">
-            <thead><tr><th>Nombre</th><th>Precio</th><th>Stock</th><th></th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- CLIENTES -->
-    <div class="view" id="view-clientes" style="display:none">
-      <h2>Clientes</h2>
-      <div class="row">
-        <div class="card">
-          <h3>Agregar / Editar cliente</h3>
-          <label>Nombre <input id="cli-name" /></label>
-          <label>Teléfono <input id="cli-phone" /></label>
-          <label>Dirección / Nota <input id="cli-note" /></label>
-          <div class="actions">
-            <button id="cli-save" class="primary">Guardar</button>
-            <button id="cli-clear" class="ghost">Limpiar</button>
-          </div>
-        </div>
-
-        <div class="card flex-1">
-          <h3>Lista de clientes</h3>
-          <input id="cli-search" placeholder="Buscar cliente..." />
-          <table id="cli-table">
-            <thead><tr><th>Nombre</th><th>Tel</th><th>Nota</th><th></th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- VENTAS -->
-    <div class="view" id="view-ventas" style="display:none">
-      <h2>Ventas</h2>
-      <div class="row">
-        <div class="card">
-          <h3>Agregar producto al carrito</h3>
-          <label>Producto
-            <select id="sale-product"></select>
-          </label>
-          <label>Cantidad <input id="sale-qty" type="number" value="1" /></label>
-          <label>Precio unitario (opcional) <input id="sale-price" type="number" step="0.01" /></label>
-          <div class="actions">
-            <button id="sale-add" class="primary">Agregar al carrito</button>
-            <button id="sale-clearcart" class="ghost">Limpiar carrito</button>
-          </div>
-
-          <h4>Carrito</h4>
-          <table id="cart-table"><thead><tr><th>Producto</th><th>Cant</th><th>PU</th><th>Total</th><th></th></tr></thead><tbody></tbody></table>
-
-          <div class="row" style="margin-top:8px">
-            <label>Tipo de venta
-              <select id="sale-type"><option value="cash">Efectivo</option><option value="credit">Crédito</option></select>
-            </label>
-            <label>Cliente (opcional)
-              <select id="sale-client"><option value="">-- Ninguno --</option></select>
-            </label>
-            <div class="actions" style="align-items:flex-end">
-              <button id="sale-finish" class="primary large">Registrar venta</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="card flex-1">
-          <h3>Ventas registradas</h3>
-          <button id="sales-refresh" class="ghost">Refrescar</button>
-          <table id="sales-table"><thead><tr><th>ID</th><th>Tipo</th><th>Total</th><th>Cliente</th><th>Pagado</th><th></th></tr></thead><tbody></tbody></table>
-        </div>
-      </div>
-    </div>
-
-    <!-- CREDITOS -->
-    <div class="view" id="view-creditos" style="display:none">
-      <h2>Créditos y pagos</h2>
-      <div class="card">
-        <h3>Ventas a crédito pendientes</h3>
-        <table id="credits-table"><thead><tr><th>ID</th><th>Cliente</th><th>Total</th><th>Pagado</th><th>Pendiente</th><th></th></tr></thead><tbody></tbody></table>
-      </div>
-    </div>
-
-    <!-- TAMBOS -->
-    <div class="view" id="view-tambos" style="display:none">
-      <h2>Tambos / Bombonas prestadas</h2>
-      <div class="row">
-        <div class="card">
-          <h3>Registrar préstamo</h3>
-          <label>Descripción (ej. Bombona 10 kg) <input id="loan-item" /></label>
-          <label>Cantidad <input id="loan-qty" type="number" value="1" /></label>
-          <label>Cliente (opcional) <select id="loan-client"><option value="">-- Ninguno --</option></select></label>
-          <div class="actions"><button id="loan-save" class="primary">Registrar préstamo</button></div>
-        </div>
-
-        <div class="card flex-1">
-          <h3>Préstamos / Estado</h3>
-          <button id="loan-refresh" class="ghost">Refrescar</button>
-          <table id="loan-table"><thead><tr><th>Item</th><th>Qty</th><th>Cliente</th><th>Estado</th><th></th></tr></thead><tbody></tbody></table>
-        </div>
-      </div>
-    </div>
-
-    <!-- REPORTES -->
-    <div class="view" id="view-reportes" style="display:none">
-      <h2>Reportes y Backup</h2>
-      <div class="card">
-        <h3>Resumen rápido</h3>
-        <pre id="summary" class="pre"></pre>
       </div>
 
-      <div class="card">
-        <h3>Exportar / Importar datos</h3>
+      <!-- Vista de créditos -->
+      <div id="creditos" class="view" style="display:none;">
+        <h2>Ventas al Crédito</h2>
+        <p>Controla los créditos activos y registra pagos.</p>
+        <table>
+          <thead>
+            <tr><th>Cliente</th><th>Monto</th><th>Fecha</th><th>Estado</th></tr>
+          </thead>
+          <tbody id="tablaCreditos">
+            <tr><td>Juan Pérez</td><td>Q120</td><td>21/10/2025</td><td>Pendiente</td></tr>
+          </tbody>
+        </table>
         <div class="actions">
-          <button id="export-json" class="primary">Exportar todo (JSON)</button>
-          <input id="import-file" type="file" accept=".json" />
-          <button id="import-json" class="ghost">Importar JSON</button>
-          <button id="reset-all" class="danger">RESET TOTAL (elimina todo)</button>
+          <button class="primary">Agregar Crédito</button>
+          <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
         </div>
-        <p class="small">Se recomienda exportar antes de importar o resetear.</p>
       </div>
-    </div>
 
-  </section>
-</main>
+      <!-- Vista de clientes -->
+      <div id="clientes" class="view" style="display:none;">
+        <h2>Clientes</h2>
+        <p>Registra y edita la información de tus clientes frecuentes.</p>
+        <div class="actions">
+          <button class="primary">Nuevo Cliente</button>
+          <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
+        </div>
+      </div>
 
+      <!-- Vista de productos -->
+      <div id="productos" class="view" style="display:none;">
+        <h2>Productos</h2>
+        <p>Administra los tipos de gas o productos adicionales.</p>
+        <div class="actions">
+          <button class="primary">Agregar Producto</button>
+          <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
+        </div>
+      </div>
 
+      <!-- Vista de tambos -->
+      <div id="tambos" class="view" style="display:none;">
+        <h2>Tambos Prestados</h2>
+        <p>Controla los tambos de gas prestados a tus clientes y sus devoluciones.</p>
+        <div class="actions">
+          <button class="primary">Registrar Préstamo</button>
+          <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
+        </div>
+      </div>
 
-<script src="script.js"></script>
+      <!-- Vista de reportes -->
+      <div id="reportes" class="view" style="display:none;">
+        <h2>Reportes</h2>
+        <p>Visualiza los totales de ventas, créditos y clientes activos.</p>
+        <div class="actions">
+          <button class="primary">Generar Reporte</button>
+          <button class="ghost" onclick="mostrarVista('inicio')">Volver</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FIRMA -->
+  <footer class="firma">
+    <p>Desarrollado por <strong>Marck Business</strong> © 2025 | Sistema Gas Charly</p>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script>
+    // Simple cambio de vista con animación
+    function mostrarVista(id){
+      const views = document.querySelectorAll('.view');
+      views.forEach(v => v.style.display = 'none');
+      const vista = document.getElementById(id);
+      if(vista){
+        vista.style.display = 'block';
+        vista.classList.add('card');
+        vista.style.animation = 'fadeInUp 0.5s ease';
+      }
+    }
+  </script>
 </body>
 </html>
-<footer class="firma">
-  <p>Desarrollado por <strong>Marck Business</strong> © 2025</p>
-</footer>
-
