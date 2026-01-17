@@ -1,213 +1,872 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GAS CHARLY</title>
-<link rel="stylesheet" href="style.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>MarckNet — Diagnóstico de Internet</title>
+
+<style>
+:root{
+  --bg0:#06070b;
+  --bg1:#0b1020;
+  --panel: rgba(255,255,255,.06);
+  --panel2: rgba(255,255,255,.09);
+  --stroke: rgba(255,255,255,.10);
+  --txt:#eaf0ff;
+  --muted: rgba(234,240,255,.65);
+
+  --g:#25D366;
+  --c:#03dac6;
+  --m:#a855f7;
+  --r:#ff4d6d;
+  --y:#ffd166;
+
+  --shadow: 0 24px 70px rgba(0,0,0,.55);
+  --radius: 22px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  color:var(--txt);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  background:
+    radial-gradient(1200px 600px at 10% 10%, rgba(3,218,198,.22), transparent 60%),
+    radial-gradient(900px 500px at 85% 18%, rgba(168,85,247,.22), transparent 55%),
+    radial-gradient(1100px 700px at 50% 120%, rgba(37,211,102,.18), transparent 55%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
+  overflow-x:hidden;
+}
+
+/* Subtle grid */
+body:before{
+  content:"";
+  position:fixed; inset:0;
+  background:
+    linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity:.25;
+  pointer-events:none;
+  mask-image: radial-gradient(900px 600px at 50% 15%, black 40%, transparent 75%);
+}
+
+.wrap{
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 18px 18px 40px;
+}
+
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:14px; flex-wrap:wrap;
+  margin-bottom:14px;
+}
+
+.brand{
+  display:flex; align-items:center; gap:12px;
+}
+.logo{
+  width:46px; height:46px; border-radius:14px;
+  background: linear-gradient(135deg, rgba(37,211,102,.35), rgba(3,218,198,.25));
+  border: 1px solid var(--stroke);
+  box-shadow: var(--shadow);
+  display:grid; place-items:center;
+  position:relative; overflow:hidden;
+}
+.logo:after{
+  content:"";
+  position:absolute; inset:-40%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), transparent 55%);
+  transform: rotate(25deg);
+}
+.logo svg{filter: drop-shadow(0 10px 25px rgba(0,0,0,.35)); opacity:.95}
+.brand h1{
+  margin:0;
+  font-size: 1.05rem;
+  letter-spacing:.3px;
+}
+.brand .sub{
+  margin-top:2px;
+  font-size:.83rem;
+  color:var(--muted);
+}
+
+.actions{
+  display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+}
+
+.btn{
+  appearance:none;
+  border:1px solid var(--stroke);
+  color:var(--txt);
+  background: rgba(255,255,255,.06);
+  border-radius: 14px;
+  padding: 11px 14px;
+  font-weight: 750;
+  letter-spacing:.2px;
+  cursor:pointer;
+  transition: transform .15s ease, background .15s ease, border-color .15s ease;
+  box-shadow: 0 14px 30px rgba(0,0,0,.30);
+}
+.btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18); }
+.btn:active{ transform: translateY(0px) scale(.99); }
+.btn.primary{
+  background: linear-gradient(135deg, rgba(37,211,102,.95), rgba(3,218,198,.85));
+  border-color: rgba(255,255,255,.18);
+  color:#071016;
+}
+.btn.primary:hover{ filter: brightness(1.03); }
+.btn.danger{
+  background: rgba(255,77,109,.12);
+  border-color: rgba(255,77,109,.35);
+}
+.btn.small{ padding:9px 12px; border-radius: 12px; font-weight:700; font-size:.92rem; }
+
+.grid{
+  display:grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap:14px;
+}
+@media (max-width: 980px){
+  .grid{ grid-template-columns: 1fr; }
+}
+
+.card{
+  background: var(--panel);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  overflow:hidden;
+  position:relative;
+}
+
+.card .hdr{
+  padding: 16px 18px 10px;
+  display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+}
+.hdr .ttl{
+  margin:0;
+  font-size: 1rem;
+  letter-spacing:.2px;
+}
+.hdr .meta{
+  color: var(--muted);
+  font-size: .86rem;
+}
+
+.card .body{ padding: 14px 18px 18px; }
+
+.sep{
+  height:1px;
+  background: rgba(255,255,255,.08);
+}
+
+/* HUD gauge */
+.hud{
+  display:grid;
+  grid-template-columns: 1fr 340px;
+  gap:14px;
+  align-items:stretch;
+}
+@media (max-width: 1100px){
+  .hud{ grid-template-columns: 1fr; }
+}
+
+.kpiRow{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:12px;
+}
+@media (max-width: 650px){
+  .kpiRow{ grid-template-columns: 1fr; }
+}
+
+.kpi{
+  border:1px solid rgba(255,255,255,.09);
+  background: rgba(255,255,255,.06);
+  border-radius: 18px;
+  padding: 12px 12px;
+  position:relative;
+  overflow:hidden;
+}
+.kpi:before{
+  content:"";
+  position:absolute; inset:-50%;
+  background: radial-gradient(circle at 30% 30%, rgba(3,218,198,.14), transparent 60%);
+  transform: rotate(10deg);
+  pointer-events:none;
+}
+.kpi .label{ color: var(--muted); font-size:.82rem; }
+.kpi .value{ font-size: 1.5rem; font-weight: 900; letter-spacing:.2px; margin-top:6px; }
+.kpi .hint{ color: var(--muted); font-size:.8rem; margin-top:4px; }
+
+.gaugeBox{
+  border:1px solid rgba(255,255,255,.09);
+  background: rgba(255,255,255,.05);
+  border-radius: 20px;
+  padding: 14px;
+  display:grid;
+  place-items:center;
+}
+.gaugeWrap{ width: 300px; max-width: 100%; }
+.gaugeLabel{
+  margin-top:10px;
+  text-align:center;
+  font-weight:900;
+  letter-spacing:.25px;
+}
+.badge{
+  display:inline-flex; gap:8px; align-items:center;
+  padding:7px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: var(--muted);
+  font-weight: 800;
+  font-size: .83rem;
+  margin-top:8px;
+}
+.dot{ width:10px; height:10px; border-radius:50%; background: var(--c); box-shadow: 0 0 18px rgba(3,218,198,.55); }
+
+/* Progress rail */
+.rail{
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.10);
+  overflow:hidden;
+  position:relative;
+}
+.rail > .fill{
+  height:100%;
+  width:0%;
+  background: linear-gradient(90deg, rgba(37,211,102,.95), rgba(3,218,198,.90), rgba(168,85,247,.80));
+  border-radius: 999px;
+  position:relative;
+  transition: width .12s ease;
+}
+.rail > .fill:after{
+  content:"";
+  position:absolute; inset:-20px -60px -20px -60px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent);
+  transform: translateX(-55%);
+  animation: shimmer 1.3s linear infinite;
+  opacity:.85;
+  filter: blur(.2px);
+}
+@keyframes shimmer{
+  to{ transform: translateX(55%); }
+}
+
+.row2{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:12px;
+}
+@media (max-width: 650px){
+  .row2{ grid-template-columns: 1fr; }
+}
+
+.mini{
+  border:1px solid rgba(255,255,255,.09);
+  background: rgba(255,255,255,.05);
+  border-radius: 18px;
+  padding: 12px;
+}
+.mini .t{ color: var(--muted); font-size:.82rem; }
+.mini .v{ font-size: 1.15rem; font-weight: 900; margin-top:6px; }
+
+.hist{
+  max-height: 320px;
+  overflow:auto;
+  padding-right:6px;
+}
+.item{
+  display:flex; justify-content:space-between; gap:10px;
+  padding: 10px 10px;
+  border-radius: 16px;
+  border:1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.05);
+  margin-bottom:10px;
+}
+.item .left{ text-align:left; }
+.item .ts{ font-size:.82rem; color: var(--muted); }
+.item .main{ font-weight: 900; margin-top:4px; }
+.item .sub{ font-size:.84rem; color: var(--muted); margin-top:3px; }
+.item .right{ text-align:right; }
+.pill{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:6px 9px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);
+  font-weight:850;
+  font-size:.82rem;
+  color: var(--txt);
+}
+
+.note{
+  color: var(--muted);
+  font-size:.86rem;
+  line-height: 1.4;
+}
+
+kbd{
+  padding:2px 6px;
+  border:1px solid rgba(255,255,255,.18);
+  border-bottom-width:2px;
+  border-radius:7px;
+  background: rgba(255,255,255,.06);
+  font-weight:800;
+  color: var(--txt);
+  font-size:.85rem;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  background: rgba(15,18,30,.88);
+  border:1px solid rgba(255,255,255,.12);
+  color: var(--txt);
+  padding: 10px 12px;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  display:none;
+  z-index:9999;
+  font-weight:800;
+}
+</style>
 </head>
+
 <body>
+<div class="wrap">
 
-<!-- Mensaje de prueba -->
-<div class="test-message">
-  VERSIÓN DE PRUEBA – Licencia temporal válida hasta el 22/11/2025.
-Uso destinado únicamente para evaluación y demostración.
-</div>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+          <path d="M4 12a8 8 0 1 1 16 0" stroke="rgba(234,240,255,.9)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 12l5-3" stroke="rgba(3,218,198,.95)" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="12" cy="12" r="2" fill="rgba(37,211,102,.95)"/>
+        </svg>
+      </div>
+      <div>
+        <h1>MarckNet — Diagnóstico de Internet</h1>
+        <div class="sub">Medición avanzada (Download + Latencia) • Diseño HUD • Historial local</div>
+      </div>
+    </div>
 
-<!-- Header / Top -->
-<div class="top">
-  <img src="fondo%20(2).png" alt="Logo" class="logo">
-
-  <div>
-    <div class="brand">GAS CHARLY</div>
-    <div class="subtitle">Controla tus ventas de forma sofisticada.</div>
-  </div>
-</div>
-
-<!-- Container -->
-<div class="container">
-  <!-- Menu lateral -->
-  <div class="menu">
-    <button class="menu-btn" data-view="inicio">🏠 Inicio</button>
-    <button class="menu-btn" data-view="productos">📦 Productos</button>
-    <button class="menu-btn" data-view="clientes">👤 Clientes</button>
-    <button class="menu-btn" data-view="ventas">💵 Ventas</button>
-    <button class="menu-btn" data-view="creditos">💳 Créditos</button>
-    <button class="menu-btn" data-view="tambos">🛢️ Tambos</button>
-    <button class="menu-btn" data-view="reportes">📊 Reportes</button>
+    <div class="actions">
+      <button class="btn small" id="btnFull">Modo Presentación</button>
+      <button class="btn danger small" id="btnClearHist">Borrar historial</button>
+      <button class="btn primary" id="btnStart">Iniciar prueba</button>
+    </div>
   </div>
 
-  <!-- Vistas -->
-  <div class="content">
-
-    <!-- INICIO -->
-    <div class="view" id="view-inicio">
-      <h2>Bienvenido</h2>
-      <p>Usa el menú para navegar entre Productos, Clientes, Ventas, Créditos, Tambos y Reportes.</p>
-    </div>
-
-    <!-- PRODUCTOS -->
-    <div class="view" id="view-productos" style="display:none">
-      <h2>Productos</h2>
-      <div class="row">
-        <div class="flex-1">
-          <label>Nombre</label>
-          <input type="text" id="prod-name">
-        </div>
+  <div class="grid">
+    <div class="card">
+      <div class="hdr">
         <div>
-          <label>Precio</label>
-          <input type="number" id="prod-price">
+          <h2 class="ttl">Panel de medición</h2>
+          <div class="meta">Tip: presiona <kbd>Enter</kbd> para iniciar • <kbd>Esc</kbd> para salir</div>
         </div>
-        <div>
-          <label>Stock</label>
-          <input type="number" id="prod-stock">
-        </div>
+        <div class="pill" id="statusPill"><span class="dot"></span><span id="statusTxt">Listo</span></div>
       </div>
-      <div class="actions">
-        <button id="prod-save" class="primary">Guardar</button>
-        <button id="prod-clear" class="ghost">Limpiar</button>
-      </div>
-      <input type="text" id="prod-search" placeholder="Buscar producto...">
-      <table id="prod-table">
-        <thead><tr><th>Nombre</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
+      <div class="sep"></div>
+      <div class="body">
 
-    <!-- CLIENTES -->
-    <div class="view" id="view-clientes" style="display:none">
-      <h2>Clientes</h2>
-      <div class="row">
-        <div class="flex-1">
-          <label>Nombre</label>
-          <input type="text" id="cli-name">
-        </div>
-        <div>
-          <label>Teléfono</label>
-          <input type="text" id="cli-phone">
-        </div>
-        <div class="flex-1">
-          <label>Nota</label>
-          <input type="text" id="cli-note">
-        </div>
-      </div>
-      <div class="actions">
-        <button id="cli-save" class="primary">Guardar</button>
-        <button id="cli-clear" class="ghost">Limpiar</button>
-      </div>
-      <input type="text" id="cli-search" placeholder="Buscar cliente...">
-      <table id="cli-table">
-        <thead><tr><th>Nombre</th><th>Teléfono</th><th>Nota</th><th>Acciones</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
+        <div class="hud">
 
-    <!-- VENTAS -->
-    <div class="view" id="view-ventas" style="display:none">
-      <h2>Ventas</h2>
-      <div class="row">
-        <div>
-          <label>Cliente</label>
-          <select id="sale-client"></select>
-        </div>
-        <div>
-          <label>Producto</label>
-          <select id="sale-product"></select>
-        </div>
-        <div>
-          <label>Cantidad</label>
-          <input type="number" id="sale-qty" value="1">
-        </div>
-        <div>
-          <label>Precio</label>
-          <input type="number" id="sale-price">
-        </div>
-        <div>
-          <label>Tipo</label>
-          <select id="sale-type">
-            <option value="cash">Efectivo</option>
-            <option value="credit">Crédito</option>
-          </select>
-        </div>
-      </div>
-      <div class="actions">
-        <button id="sale-add" class="primary">Agregar al carrito</button>
-        <button id="sale-clearcart" class="ghost">Limpiar carrito</button>
-        <button id="sale-finish" class="primary">Finalizar venta</button>
-      </div>
-      <table id="cart-table">
-        <thead><tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Total</th><th>Acciones</th></tr></thead>
-        <tbody></tbody>
-      </table>
+          <div>
+            <div class="kpiRow">
+              <div class="kpi">
+                <div class="label">Download (Mbps)</div>
+                <div class="value" id="kpiDown">0.00</div>
+                <div class="hint" id="hintDown">Esperando prueba…</div>
+              </div>
+              <div class="kpi">
+                <div class="label">Latencia (ms)</div>
+                <div class="value" id="kpiPing">—</div>
+                <div class="hint" id="hintPing">Ping aproximado por HTTP</div>
+              </div>
+              <div class="kpi">
+                <div class="label">Calidad</div>
+                <div class="value" id="kpiQual">—</div>
+                <div class="hint" id="hintQual">Evaluación automática</div>
+              </div>
+            </div>
 
-      <h3>Ventas recientes</h3>
-      <button id="sales-refresh" class="ghost">Refrescar</button>
-      <table id="sales-table">
-        <thead><tr><th>ID</th><th>Tipo</th><th>Total</th><th>Cliente</th><th>Pagado</th><th>Acciones</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
+            <div style="margin-top:12px;">
+              <div class="note">Progreso</div>
+              <div class="rail" aria-label="Progreso de prueba">
+                <div class="fill" id="progressFill"></div>
+              </div>
+              <div class="row2" style="margin-top:12px;">
+                <div class="mini">
+                  <div class="t">IP Pública</div>
+                  <div class="v" id="ipPublic">—</div>
+                </div>
+                <div class="mini">
+                  <div class="t">Red local (aprox.)</div>
+                  <div class="v" id="netLocal">—</div>
+                </div>
+              </div>
 
-    <!-- CRÉDITOS -->
-    <div class="view" id="view-creditos" style="display:none">
-      <h2>Créditos</h2>
-      <table id="credits-table">
-        <thead><tr><th>ID</th><th>Cliente</th><th>Total</th><th>Pagado</th><th>Pendiente</th><th>Acciones</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
+              <div class="mini" style="margin-top:12px;">
+                <div class="t">Servidor de prueba</div>
+                <div class="v" id="serverUsed">Hetzner (10/100MB)</div>
+                <div class="note" style="margin-top:8px;">
+                  Nota: esto mide <b>descarga real</b>. La subida y el listado de dispositivos requieren app de Windows (por seguridad del navegador).
+                </div>
+              </div>
+            </div>
+          </div>
 
-    <!-- TAMBOS -->
-    <div class="view" id="view-tambos" style="display:none">
-      <h2>Tambos / Préstamos</h2>
-      <div class="row">
-        <div>
-          <label>Producto / Ítem</label>
-          <input type="text" id="loan-item" placeholder="Bombona">
-        </div>
-        <div>
-          <label>Cantidad</label>
-          <input type="number" id="loan-qty" value="1">
-        </div>
-        <div>
-          <label>Cliente</label>
-          <select id="loan-client"></select>
-        </div>
-      </div>
-      <div class="actions">
-        <button id="loan-save" class="primary">Guardar préstamo</button>
-        <button id="loan-refresh" class="ghost">Refrescar</button>
-      </div>
-      <table id="loan-table">
-        <thead><tr><th>Ítem</th><th>Cantidad</th><th>Cliente</th><th>Estado</th><th>Acciones</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
+          <div class="gaugeBox">
+            <div class="gaugeWrap">
+              <svg viewBox="0 0 220 140" width="100%" role="img" aria-label="Tacómetro de velocidad">
+                <!-- arc background -->
+                <path d="M20 120 A90 90 0 0 1 200 120" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="18" stroke-linecap="round"/>
+                <!-- arc value -->
+                <path id="arcVal" d="M20 120 A90 90 0 0 1 200 120" fill="none" stroke="url(#grad)" stroke-width="18" stroke-linecap="round"
+                      stroke-dasharray="290" stroke-dashoffset="290"/>
+                <defs>
+                  <linearGradient id="grad" x1="20" y1="120" x2="200" y2="120" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="rgba(37,211,102,.95)"/>
+                    <stop offset=".55" stop-color="rgba(3,218,198,.90)"/>
+                    <stop offset="1" stop-color="rgba(168,85,247,.85)"/>
+                  </linearGradient>
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="2.2" result="b"/>
+                    <feMerge>
+                      <feMergeNode in="b"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+                </defs>
 
-    <!-- REPORTES -->
-    <div class="view" id="view-reportes" style="display:none">
-      <h2>Reportes / Resumen</h2>
-      <pre id="summary"></pre>
-      <div class="actions">
-        <button id="export-json" class="primary">Exportar JSON</button>
-        <input type="file" id="import-file">
-        <button id="import-json" class="primary">Importar JSON</button>
-        <button id="reset-all" class="danger">RESET TOTAL</button>
+                <!-- needle -->
+                <g id="needle" transform="translate(110,120) rotate(-90)" filter="url(#glow)">
+                  <path d="M0 0 L70 0" stroke="rgba(234,240,255,.92)" stroke-width="4" stroke-linecap="round"/>
+                  <circle cx="0" cy="0" r="7" fill="rgba(37,211,102,.95)"/>
+                </g>
+
+                <!-- labels -->
+                <text x="20" y="132" fill="rgba(234,240,255,.55)" font-size="10" font-weight="800">0</text>
+                <text x="182" y="132" fill="rgba(234,240,255,.55)" font-size="10" font-weight="800">MAX</text>
+              </svg>
+
+              <div class="gaugeLabel">
+                <div style="font-size:.9rem;color:var(--muted);">Velocidad actual</div>
+                <div style="font-size:2.0rem;font-weight:1000;letter-spacing:.3px;" id="gaugeVal">0.00 Mbps</div>
+                <div class="badge"><span class="dot" id="qualDot"></span><span id="qualBadge">Listo</span></div>
+              </div>
+
+              <div class="note" style="margin-top:10px;text-align:center;">
+                Tecla rápida: <kbd>Enter</kbd> iniciar • <kbd>Esc</kbd> salir pantalla completa
+              </div>
+            </div>
+          </div>
+
+        </div>
+
       </div>
     </div>
 
+    <div class="card">
+      <div class="hdr">
+        <div>
+          <h2 class="ttl">Historial de pruebas</h2>
+          <div class="meta">Se guarda en este navegador</div>
+        </div>
+        <div class="pill"><span style="opacity:.75">📈</span><span id="histCount">0</span></div>
+      </div>
+      <div class="sep"></div>
+      <div class="body">
+        <div class="hist" id="hist"></div>
+        <div class="note">
+          <b>Dispositivos conectados:</b> el navegador no puede ver IP/MAC por seguridad.
+          Si quieres, te armo una <b>versión Windows 64-bit (.EXE)</b> que liste equipos conectados con fabricante (Apple/Samsung/etc).
+        </div>
+      </div>
+    </div>
   </div>
+
 </div>
 
-<div class="firma">
-  <strong>MarckBusiness © 2025 — Todos los derechos reservados</strong> - Ingeniero: Ruiz Balcarcel Juan Luis
-</div>
+<div class="toast" id="toast"></div>
 
-<!-- SCRIPTS -->
-<script src="script.js"></script>
+<script>
+/* ===========================
+   Estado UI
+=========================== */
+const $ = (id)=>document.getElementById(id);
+const btnStart = $("btnStart");
+const btnFull  = $("btnFull");
+const btnClearHist = $("btnClearHist");
 
+const statusTxt = $("statusTxt");
+const statusPill = $("statusPill");
+const progressFill = $("progressFill");
+
+const kpiDown = $("kpiDown");
+const kpiPing = $("kpiPing");
+const kpiQual = $("kpiQual");
+const hintDown = $("hintDown");
+const hintQual = $("hintQual");
+
+const gaugeVal = $("gaugeVal");
+const arcVal = $("arcVal");
+const needle = $("needle");
+
+const ipPublic = $("ipPublic");
+const netLocal = $("netLocal");
+const serverUsed = $("serverUsed");
+
+const hist = $("hist");
+const histCount = $("histCount");
+const qualBadge = $("qualBadge");
+const qualDot = $("qualDot");
+const toast = $("toast");
+
+let running = false;
+
+/* ===========================
+   Helpers
+=========================== */
+function fmt(n, d=2){ return Number(n).toFixed(d); }
+function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+function nowISO(){ return new Date().toISOString(); }
+function niceTS(iso){
+  const d = new Date(iso);
+  return d.toLocaleString();
+}
+function setStatus(text){
+  statusTxt.textContent = text;
+}
+function setProgress(pct){
+  progressFill.style.width = clamp(pct,0,100) + "%";
+}
+
+function toastMsg(msg){
+  toast.textContent = msg;
+  toast.style.display = "block";
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>toast.style.display="none", 2200);
+}
+
+/* ===========================
+   Gauge mapping
+   - We'll use a "max dial" of 300 Mbps by default
+=========================== */
+const DIAL_MAX = 300;
+
+function setGauge(mbps){
+  const v = clamp(mbps, 0, DIAL_MAX);
+  gaugeVal.textContent = fmt(mbps) + " Mbps";
+
+  // Arc dashoffset: 290 is full length
+  const arcLen = 290;
+  const ratio = v / DIAL_MAX;
+  arcVal.setAttribute("stroke-dashoffset", String(arcLen - arcLen*ratio));
+
+  // Needle: -90deg to +90deg
+  const deg = -90 + 180*ratio;
+  needle.setAttribute("transform", `translate(110,120) rotate(${deg})`);
+}
+
+/* ===========================
+   Quality rules (simple + practical)
+=========================== */
+function qualityFrom(downMbps, pingMs){
+  // Basic heuristic
+  let q = "Regular";
+  let dot = "var(--y)";
+
+  if(downMbps >= 60 && pingMs <= 40){ q="Excelente"; dot="var(--c)"; }
+  else if(downMbps >= 25 && pingMs <= 70){ q="Buena"; dot="var(--g)"; }
+  else if(downMbps < 8 || pingMs > 140){ q="Mala"; dot="var(--r)"; }
+
+  return {q, dot};
+}
+
+function applyQuality(q, dot){
+  kpiQual.textContent = q;
+  qualBadge.textContent = q;
+  qualDot.style.background = dot;
+  qualDot.style.boxShadow = `0 0 18px ${dot.replace("var(", "").replace(")", "")}`;
+  hintQual.textContent = q === "Excelente" ? "Ideal para streaming + ventas" :
+                         q === "Buena" ? "Estable para trabajo diario" :
+                         q === "Regular" ? "Puede variar en horas pico" :
+                         "Revisar router / ISP / señal";
+}
+
+/* ===========================
+   Public IP
+=========================== */
+async function loadPublicIP(){
+  ipPublic.textContent = "Consultando…";
+  try{
+    const r = await fetch("https://api.ipify.org?format=json", {cache:"no-store"});
+    const j = await r.json();
+    ipPublic.textContent = j.ip || "—";
+  }catch(e){
+    ipPublic.textContent = "—";
+  }
+}
+
+/* ===========================
+   Local network (approx) - we cannot get LAN IP reliably in browser.
+   We'll show: "No disponible en navegador" + hints.
+=========================== */
+function showLocalNetInfo(){
+  netLocal.textContent = "No disponible (navegador)";
+}
+
+/* ===========================
+   Ping (approx) using HTTP request time
+=========================== */
+async function measurePing(){
+  const url = "https://www.google.com/favicon.ico?x=" + Math.random();
+  const tries = 5;
+  let times = [];
+
+  for(let i=0;i<tries;i++){
+    const t0 = performance.now();
+    try{
+      await fetch(url, {method:"GET", mode:"no-cors", cache:"no-store"});
+      const t1 = performance.now();
+      times.push(t1-t0);
+    }catch(e){
+      // even if it fails due to CORS, the timing often exists; but here we just record a fallback
+      times.push(180);
+    }
+    await new Promise(r=>setTimeout(r, 120));
+  }
+
+  times.sort((a,b)=>a-b);
+  const median = times[Math.floor(times.length/2)];
+  return Math.round(median);
+}
+
+/* ===========================
+   Download speed test (real)
+   - Fetch a file stream and compute Mbps live.
+   - We try 10MB first; if too fast, we may try 100MB (optional)
+=========================== */
+async function downloadTest(url, expectedBytes, onProgress){
+  const start = performance.now();
+  let received = 0;
+
+  const res = await fetch(url + (url.includes("?") ? "&" : "?") + "t=" + Math.random(), {cache:"no-store"});
+  const reader = res.body.getReader();
+
+  while(true){
+    const {done, value} = await reader.read();
+    if(done) break;
+    received += value.byteLength;
+
+    const now = performance.now();
+    const sec = (now - start)/1000;
+    const mbps = (received*8)/(sec*1024*1024);
+
+    if(onProgress) onProgress(received, expectedBytes, mbps);
+  }
+
+  const end = performance.now();
+  const sec = (end - start)/1000;
+  const mbps = (received*8)/(sec*1024*1024);
+
+  return {mbps, bytes: received, sec};
+}
+
+/* ===========================
+   History
+=========================== */
+const KEY_HIST = "marcknet_hist_v1";
+function getHist(){
+  try{ return JSON.parse(localStorage.getItem(KEY_HIST) || "[]"); }catch{ return []; }
+}
+function setHist(arr){
+  localStorage.setItem(KEY_HIST, JSON.stringify(arr));
+}
+function renderHist(){
+  const arr = getHist();
+  histCount.textContent = arr.length;
+  if(arr.length === 0){
+    hist.innerHTML = `<div class="note">No hay pruebas aún. Presiona <b>Iniciar prueba</b>.</div>`;
+    return;
+  }
+
+  hist.innerHTML = arr.slice().reverse().map(x=>{
+    const {q, dot} = qualityFrom(x.down, x.ping);
+    return `
+      <div class="item">
+        <div class="left">
+          <div class="ts">${niceTS(x.ts)}</div>
+          <div class="main">${fmt(x.down)} Mbps <span style="color:rgba(234,240,255,.55);font-weight:800;">•</span> ${x.ping} ms</div>
+          <div class="sub">Servidor: ${x.server}</div>
+        </div>
+        <div class="right">
+          <div class="pill" style="border-color:rgba(255,255,255,.12)">
+            <span class="dot" style="background:${dot};box-shadow:0 0 18px ${dot}"></span>
+            <span>${q}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+/* ===========================
+   Main test flow
+=========================== */
+async function start(){
+  if(running) return;
+  running = true;
+  btnStart.disabled = true;
+  setStatus("Midiendo…");
+  setProgress(2);
+
+  // Reset KPIs
+  kpiDown.textContent = "0.00";
+  kpiPing.textContent = "—";
+  applyQuality("—", "var(--c)");
+  hintDown.textContent = "Preparando test…";
+  setGauge(0);
+
+  await loadPublicIP();
+  showLocalNetInfo();
+
+  // Ping
+  setProgress(8);
+  kpiPing.textContent = "…";
+  let pingMs = 0;
+  try{
+    pingMs = await measurePing();
+    kpiPing.textContent = String(pingMs);
+  }catch{
+    pingMs = 180;
+    kpiPing.textContent = "—";
+  }
+
+  // Download
+  setProgress(12);
+  hintDown.textContent = "Descargando muestra (10MB)…";
+
+  // Primary server: Hetzner
+  const server = "Hetzner";
+  serverUsed.textContent = "Hetzner (10MB / 100MB)";
+  const url10 = "https://speed.hetzner.de/10MB.bin";
+  const url100 = "https://speed.hetzner.de/100MB.bin";
+
+  let down = 0;
+
+  try{
+    const r10 = await downloadTest(url10, 10*1024*1024, (recv, exp, mbps)=>{
+      const pct = 12 + (recv/exp)*60; // 12->72
+      setProgress(pct);
+      down = mbps;
+      kpiDown.textContent = fmt(mbps);
+      setGauge(mbps);
+      const {q, dot} = qualityFrom(mbps, pingMs);
+      applyQuality(q, dot);
+    });
+
+    down = r10.mbps;
+
+    // If extremely fast, do a longer test for stability
+    if(down > 160){
+      hintDown.textContent = "Velocidad alta detectada. Verificando con 100MB…";
+      const r100 = await downloadTest(url100, 100*1024*1024, (recv, exp, mbps)=>{
+        const pct = 72 + (recv/exp)*24; // 72->96
+        setProgress(pct);
+        down = mbps;
+        kpiDown.textContent = fmt(mbps);
+        setGauge(mbps);
+        const {q, dot} = qualityFrom(mbps, pingMs);
+        applyQuality(q, dot);
+      });
+      down = r100.mbps;
+    }
+
+  }catch(e){
+    toastMsg("No se pudo medir (bloqueo/CORS o servidor). Intenta de nuevo.");
+    hintDown.textContent = "Error de medición. Reintenta.";
+    setStatus("Error");
+    setProgress(0);
+    btnStart.disabled = false;
+    running = false;
+    return;
+  }
+
+  setProgress(100);
+  setStatus("Completado");
+  hintDown.textContent = "Prueba finalizada.";
+
+  const {q, dot} = qualityFrom(down, pingMs);
+  applyQuality(q, dot);
+
+  // Save history
+  const arr = getHist();
+  arr.push({ ts: nowISO(), down: Number(down), ping: Number(pingMs), server });
+  setHist(arr);
+  renderHist();
+
+  toastMsg("Prueba guardada en historial ✅");
+
+  btnStart.disabled = false;
+  running = false;
+}
+
+/* ===========================
+   Fullscreen
+=========================== */
+async function toggleFull(){
+  try{
+    if(!document.fullscreenElement){
+      await document.documentElement.requestFullscreen();
+      toastMsg("Modo Presentación activado");
+    }else{
+      await document.exitFullscreen();
+    }
+  }catch(e){
+    toastMsg("Tu navegador bloqueó pantalla completa.");
+  }
+}
+
+/* ===========================
+   Events
+=========================== */
+btnStart.addEventListener("click", start);
+btnFull.addEventListener("click", toggleFull);
+
+btnClearHist.addEventListener("click", ()=>{
+  if(confirm("¿Borrar historial de pruebas?")){
+    localStorage.removeItem(KEY_HIST);
+    renderHist();
+    toastMsg("Historial borrado");
+  }
+});
+
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter") start();
+  if(e.key === "Escape" && document.fullscreenElement) document.exitFullscreen();
+});
+
+/* Init */
+renderHist();
+loadPublicIP();
+showLocalNetInfo();
+setGauge(0);
+applyQuality("Listo", "var(--c)");
+</script>
 </body>
 </html>
-
-
-
